@@ -3,266 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>土木工程測量與設計模擬實驗室</title>
+    <title>工程測量模擬實驗室 (Full View)</title>
     <style>
         /* =========================================
-           1. Core Variables & Reset
+           1. 核心設定：鎖定一頁 (No Scroll)
            ========================================= */
         :root {
             --bg-body: #121212;
             --bg-panel: #1e1e1e;
-            --bg-canvas: #0d1117;
-            --text-main: #e0e0e0;
+            --text-main: #f0f0f0;
             --text-muted: #aaaaaa;
-            --primary: #4db8ff;      /* 測量藍 */
-            --accent: #ffcc00;       /* 警告黃 */
-            --danger: #ff4d4d;       /* 標記紅 */
-            --success: #2ecc71;      /* 成功綠 */
-            --border: #333333;
-            --font-stack: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --primary: #4db8ff;
+            --accent: #ffcc00;
+            --danger: #ff5555;
+            --border: #444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: var(--font-stack);
+        html, body {
+            width: 100%;
+            height: 100%; /* 強制填滿視窗 */
+            overflow: hidden; /* 禁止捲軸 */
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
         }
 
         /* =========================================
-           2. Layout Structure
+           2. 頂部區域 (Header & Tabs)
            ========================================= */
         header {
-            width: 100%;
+            flex: 0 0 auto; /* 固定高度，不伸縮 */
             background: var(--bg-panel);
             border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        h1 { font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            padding: 0 20px;
-            flex: 1;
-        }
+        h1 { font-size: 1.5rem; color: var(--primary); letter-spacing: 1px; margin: 0; }
 
-        /* =========================================
-           3. Tabs Navigation
-           ========================================= */
         .tabs {
             display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
             gap: 10px;
         }
 
         .tab-btn {
             background: transparent;
-            border: 2px solid var(--border);
+            border: 1px solid var(--border);
             color: var(--text-muted);
-            padding: 10px 25px;
+            padding: 8px 20px;
             cursor: pointer;
-            font-size: 1rem;
-            border-radius: 30px;
-            transition: all 0.3s ease;
+            font-size: 1.1rem; /* 字體加大 */
+            font-weight: 600;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
 
-        .tab-btn:hover { border-color: var(--primary); color: var(--text-main); }
-        
         .tab-btn.active {
             background: var(--primary);
-            border-color: var(--primary);
             color: #000;
-            font-weight: bold;
+            border-color: var(--primary);
         }
 
-        /* Tab Content Visibility Logic */
-        .module-section { display: none; animation: fadeIn 0.4s ease; }
-        .module-section.active { display: block; }
+        /* =========================================
+           3. 主內容區 (自動填滿剩餘空間)
+           ========================================= */
+        main {
+            flex: 1 1 auto; /* 佔據剩餘高度 */
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            overflow: hidden; /* 內部也不捲動 */
+            position: relative;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .module-section {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+        }
+        .module-section.active { display: flex; }
 
         /* =========================================
-           4. Component: Dashboard Cards (L1 Style)
+           4. L1 樣式：上方儀表板 + 下方畫布
            ========================================= */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
+        .dashboard-row {
+            flex: 0 0 auto;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
             background: var(--bg-panel);
-            padding: 20px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 6px;
             border: 1px solid var(--border);
-            margin-bottom: 15px;
         }
 
         .data-card {
+            flex: 1;
             background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-left: 4px solid var(--primary);
+            padding: 10px 15px;
+            border-left: 5px solid var(--primary);
             border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .data-label { font-size: 0.8em; color: var(--text-muted); display: block; margin-bottom: 5px;}
-        .data-value { font-size: 1.1em; font-weight: bold; font-family: 'Courier New', monospace; }
+        .data-label { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 4px; }
+        .data-value { font-size: 1.6rem; font-weight: bold; font-family: monospace; white-space: nowrap;}
 
         /* =========================================
-           5. Component: Control Panel (L2 Style)
+           5. L2 樣式：左側控制 + 右側畫布
            ========================================= */
         .split-layout {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 20px;
+            display: flex;
+            height: 100%;
+            gap: 10px;
         }
 
         .control-panel {
+            flex: 0 0 320px; /* 固定寬度 320px */
             background: var(--bg-panel);
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 6px;
             border: 1px solid var(--border);
-            height: fit-content;
-        }
-
-        .control-group { margin-bottom: 20px; }
-        .control-group label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em; font-weight: 600; }
-        
-        input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-
-        .results-table {
-            margin-top: 20px;
-            border-top: 1px dashed var(--border);
-            padding-top: 15px;
-        }
-        
-        .result-row {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-            color: var(--text-muted);
+            flex-direction: column;
+            overflow-y: auto; /* 若螢幕太矮，只有側邊欄可捲動 */
         }
-        .result-row strong { color: var(--accent); }
+
+        .control-group { margin-bottom: 25px; }
+        .control-group label { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; }
+        input[type="range"] { width: 100%; height: 25px; accent-color: var(--primary); cursor: pointer; }
+
+        .results-table { margin-top: auto; padding-top: 20px; border-top: 1px dashed var(--border); }
+        .result-row { display: flex; justify-content: space-between; font-size: 1.1rem; margin-bottom: 10px; color: var(--text-muted); }
+        .result-row strong { color: var(--accent); font-size: 1.3rem; }
 
         .btn-action {
-            width: 100%;
-            padding: 12px;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s;
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: var(--success); color: white; border: none; border-radius: 6px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
         }
-        .btn-action:hover { transform: scale(1.02); filter: brightness(1.1); }
+        .btn-action:hover { filter: brightness(1.1); }
 
         /* =========================================
-           6. Canvas Common
+           6. Canvas 共用與修正
            ========================================= */
-        canvas {
-            width: 100%;
-            background-color: var(--bg-canvas);
+        .canvas-container {
+            flex: 1; /* 自動填滿 */
+            position: relative;
+            background: #000;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: crosshair;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            overflow: hidden;
         }
 
-        /* L1 Specific Grid Background */
+        canvas {
+            display: block; /* 消除底部白邊 */
+            width: 100%;
+            height: 100%;
+            background-color: #0d1117;
+            cursor: crosshair;
+        }
+
         #surveyCanvas {
-            background-image: 
-                linear-gradient(rgba(50, 255, 50, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(50, 255, 50, 0.05) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(50,255,50,0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(50,255,50,0.1) 1px, transparent 1px);
             background-size: 50px 50px;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .split-layout { grid-template-columns: 1fr; }
-            .dashboard-grid { grid-template-columns: 1fr; }
-        }
-        
-        .instruction { color: var(--text-muted); margin-bottom: 10px; font-size: 0.9rem; text-align: center;}
     </style>
 </head>
 <body>
 
     <header>
-        <div class="container">
-            <h1>CIVIL ENGINEERING LAB</h1>
-        </div>
+        <h1>CIVIL LAB</h1>
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="App.switchTab('survey')">📍 測量座標</button>
+            <button class="tab-btn" onclick="App.switchTab('curve')">🛣️ 道路曲線</button>
+        </nav>
     </header>
 
-    <main class="container">
-        <!-- Navigation Tabs -->
-        <nav class="tabs" role="tablist">
-            <button class="tab-btn active" onclick="App.switchTab('survey')" aria-selected="true">
-                📍 座標與方位角
-            </button>
-            <button class="tab-btn" onclick="App.switchTab('curve')" aria-selected="false">
-                🛣️ 道路曲線設計
-            </button>
-        </nav>
-
+    <main>
         <!-- MODULE 1: Surveying -->
-        <section id="module-survey" class="module-section active" role="tabpanel">
-            <div class="instruction">操作：點擊設定 <b>起點 (A)</b>，再次點擊設定 <b>終點 (B)</b>。</div>
-            
-            <div class="dashboard-grid">
+        <section id="module-survey" class="module-section active">
+            <!-- 上方數據列 -->
+            <div class="dashboard-row">
                 <div class="data-card">
-                    <span class="data-label">起點座標 (Point A)</span>
-                    <span id="s_coordA" class="data-value">N: 0.000, E: 0.000</span>
+                    <span class="data-label">起點 A (Start)</span>
+                    <span id="s_coordA" class="data-value">N:0.00 E:0.00</span>
                 </div>
                 <div class="data-card">
-                    <span class="data-label">終點座標 (Point B)</span>
-                    <span id="s_coordB" class="data-value">N: 0.000, E: 0.000</span>
+                    <span class="data-label">終點 B (End)</span>
+                    <span id="s_coordB" class="data-value">N:0.00 E:0.00</span>
                 </div>
                 <div class="data-card" style="border-left-color: var(--accent);">
-                    <span class="data-label">水平距離 (Distance)</span>
-                    <span id="s_distVal" class="data-value">0.000 m</span>
+                    <span class="data-label">距離 (Dist)</span>
+                    <span id="s_distVal" class="data-value" style="color:var(--accent)">0.000m</span>
                 </div>
                 <div class="data-card" style="border-left-color: var(--danger);">
                     <span class="data-label">方位角 (Azimuth)</span>
-                    <span id="s_aziVal" class="data-value">0° 00' 00"</span>
+                    <span id="s_aziVal" class="data-value" style="color:var(--danger)">0°00'00"</span>
                 </div>
             </div>
-
-            <canvas id="surveyCanvas" width="1000" height="600"></canvas>
+            
+            <!-- 下方畫布 (自動填滿) -->
+            <div class="canvas-container" id="survey-container">
+                <canvas id="surveyCanvas"></canvas>
+            </div>
         </section>
 
         <!-- MODULE 2: Curves -->
-        <section id="module-curve" class="module-section" role="tabpanel">
+        <section id="module-curve" class="module-section">
             <div class="split-layout">
-                <!-- Controls -->
+                <!-- 左側控制 -->
                 <div class="control-panel">
-                    <h3>📐 設計參數</h3>
-                    <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
-                    
                     <div class="control-group">
-                        <label>轉折角 Delta (Δ): <span id="c_valDelta" style="color:var(--primary)">60°</span></label>
+                        <label>轉折角 Δ: <span id="c_valDelta" style="color:var(--primary)">60°</span></label>
                         <input type="range" id="c_inDelta" min="10" max="150" value="60">
                     </div>
-                    
                     <div class="control-group">
-                        <label>曲線半徑 Radius (R): <span id="c_valR" style="color:var(--primary)">200 m</span></label>
+                        <label>半徑 R: <span id="c_valR" style="color:var(--primary)">200m</span></label>
                         <input type="range" id="c_inR" min="50" max="500" step="10" value="200">
                     </div>
-
+                    
                     <div class="results-table">
                         <div class="result-row"><span>切線長 (T)</span><strong id="c_outT">--</strong></div>
                         <div class="result-row"><span>曲線長 (L)</span><strong id="c_outL">--</strong></div>
@@ -270,55 +240,49 @@
                         <div class="result-row"><span>長弦 (LC)</span><strong id="c_outLC">--</strong></div>
                     </div>
 
-                    <div style="margin-top: 20px;">
-                        <button class="btn-action" onclick="CurveModule.startAnimation()">🚗 執行行車模擬</button>
-                    </div>
+                    <button class="btn-action" onclick="CurveModule.startAnimation()">🚗 執行模擬</button>
                 </div>
 
-                <!-- Visualization -->
-                <div>
-                    <canvas id="curveCanvas" width="800" height="600"></canvas>
+                <!-- 右側畫布 -->
+                <div class="canvas-container" id="curve-container">
+                    <canvas id="curveCanvas"></canvas>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer style="margin-top: 40px; padding: 20px; color: #555; font-size: 0.8em; text-align: center;">
-        Civil Engineering Simulation Interface &copy; 2026 | Modern Web Architecture
-    </footer>
-
     <script>
         /**
-         * GLOBAL APP CONTROLLER
-         * Handles tab switching and initialization
+         * GLOBAL CONTROLLER
          */
         const App = {
             switchTab: function(tabName) {
-                // Update Buttons
+                // UI 切換
                 document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
                 event.currentTarget.classList.add('active');
-
-                // Update Sections
+                
                 document.querySelectorAll('.module-section').forEach(sec => sec.classList.remove('active'));
                 document.getElementById(`module-${tabName}`).classList.add('active');
 
-                // Trigger Resize/Re-draw to prevent canvas glitches
-                if(tabName === 'survey') SurveyModule.draw();
-                if(tabName === 'curve') CurveModule.draw();
+                // 關鍵修正：切換 Tab 後立即重新計算尺寸與重繪
+                // 使用 setTimeout 確保 DOM `display:flex` 已經生效，這樣 offsetWidth 才是正確的
+                setTimeout(() => {
+                    if(tabName === 'survey') SurveyModule.resizeAndDraw();
+                    if(tabName === 'curve') CurveModule.resizeAndDraw();
+                }, 10);
             }
         };
 
         /**
-         * MODULE 1: SURVEYING LOGIC
-         * Encapsulated to avoid variable conflicts
+         * MODULE 1: SURVEYING (L1)
          */
         const SurveyModule = (function() {
             const canvas = document.getElementById('surveyCanvas');
             const ctx = canvas.getContext('2d');
+            const container = document.getElementById('survey-container');
             
-            // State
             let state = {
-                step: 0, // 0: Start, 1: Point A set, 2: Point B set
+                step: 0,
                 p1: { x: 0, y: 0, N: 0, E: 0 },
                 p2: { x: 0, y: 0, N: 0, E: 0 },
                 currentMouse: null
@@ -327,8 +291,18 @@
             const ORIGIN_N = 1000;
             const ORIGIN_E = 1000;
 
+            function resizeAndDraw() {
+                // 讓 Canvas 內部解析度等於容器顯示大小
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+                draw();
+            }
+
+            // 視窗縮放時觸發
+            window.addEventListener('resize', resizeAndDraw);
+
             function getSurveyCoords(canvasX, canvasY) {
-                // Mapping canvas pixels to survey coordinates
+                // N, E 轉換
                 const E = ORIGIN_E + (canvasX - canvas.width / 2);
                 const N = ORIGIN_N - (canvasY - canvas.height / 2);
                 return { N, E };
@@ -346,25 +320,21 @@
 
             function formatDMS(deg) {
                 const d = Math.floor(deg);
-                const mFull = (deg - d) * 60;
-                const m = Math.floor(mFull);
-                const s = Math.round((mFull - m) * 60);
-                return `${d}° ${String(m).padStart(2, '0')}' ${String(s).padStart(2, '0')}"`;
+                const m = Math.floor((deg - d) * 60);
+                const s = Math.round(((deg - d) * 60 - m) * 60);
+                return `${d}° ${String(m).padStart(2,'0')}' ${String(s).padStart(2,'0')}"`;
             }
 
             function draw() {
-                // Clear & Grid
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // North Arrow
                 drawNorthArrow();
 
                 if (state.step >= 1) {
                     drawPoint(state.p1.x, state.p1.y, 'A');
                     
                     let target = (state.step === 2) ? state.p2 : state.currentMouse;
-                    if (!target && state.step === 1) return;
-
+                    
+                    // 修正：必須要有 target 才畫線
                     if (state.step === 1 && state.currentMouse) {
                         drawLine(state.p1, state.currentMouse, true);
                         updateUI(state.p1, state.currentMouse);
@@ -379,121 +349,123 @@
             function drawNorthArrow() {
                 const x = canvas.width - 50;
                 const y = 50;
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                ctx.beginPath();
-                ctx.moveTo(x, y); ctx.lineTo(x, y + 50);
-                ctx.lineTo(x - 5, y + 10); ctx.moveTo(x, y); ctx.lineTo(x + 5, y + 10);
-                ctx.stroke();
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-                ctx.font = '14px Arial';
-                ctx.fillText('N', x - 5, y - 5);
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x, y+40);
+                ctx.lineTo(x-8, y+10); ctx.moveTo(x, y); ctx.lineTo(x+8, y+10); ctx.stroke();
+                ctx.fillStyle = '#fff'; ctx.font = '20px Arial'; ctx.fillText('N', x-7, y-5);
             }
 
             function drawPoint(x, y, label) {
                 ctx.fillStyle = '#4db8ff';
-                ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.font = 'bold 16px Arial'; ctx.fillText(label, x + 12, y - 5);
+                ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; ctx.font = 'bold 20px Arial'; ctx.fillText(label, x+10, y-5);
             }
 
             function drawLine(pStart, pEnd, isDashed) {
-                // Line
                 ctx.strokeStyle = '#ffcc00'; ctx.lineWidth = 2;
-                ctx.setLineDash(isDashed ? [5, 5] : []);
+                ctx.setLineDash(isDashed ? [6, 6] : []);
                 ctx.beginPath(); ctx.moveTo(pStart.x, pStart.y); ctx.lineTo(pEnd.x, pEnd.y); ctx.stroke();
                 ctx.setLineDash([]);
-
-                // Azimuth Arc
-                const radius = 40;
-                const geoData = computeGeo({N: pStart.N, E: pStart.E}, {N: pEnd.N, E: pEnd.E});
-                let startAngle = -Math.PI / 2;
-                let endAngle = startAngle + (geoData.azimuthDeg * Math.PI / 180);
                 
-                ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 1;
-                ctx.beginPath(); ctx.moveTo(pStart.x, pStart.y); ctx.lineTo(pStart.x, pStart.y - radius); ctx.stroke();
-                ctx.beginPath(); ctx.arc(pStart.x, pStart.y, radius - 10, startAngle, endAngle, false); ctx.stroke();
+                // 畫弧
+                const r = 50;
+                const geo = computeGeo(pStart, pEnd); // 這裡傳入的 pStart, pEnd 已包含 N, E
+                let startAngle = -Math.PI / 2;
+                let endAngle = startAngle + (geo.azimuthDeg * Math.PI / 180);
+                
+                ctx.strokeStyle = '#ff5555'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(pStart.x, pStart.y); ctx.lineTo(pStart.x, pStart.y - r); ctx.stroke();
+                ctx.beginPath(); ctx.arc(pStart.x, pStart.y, r - 10, startAngle, endAngle, false); ctx.stroke();
             }
 
             function updateUI(p1, p2) {
-                document.getElementById('s_coordA').textContent = `N: ${p1.N.toFixed(3)}, E: ${p1.E.toFixed(3)}`;
-                document.getElementById('s_coordB').textContent = `N: ${p2.N.toFixed(3)}, E: ${p2.E.toFixed(3)}`;
-                const result = computeGeo(p1, p2);
-                document.getElementById('s_distVal').textContent = `${result.dist.toFixed(3)} m`;
-                document.getElementById('s_aziVal').textContent = formatDMS(result.azimuthDeg);
+                // 使用 innerHTML 加換行讓大字不擠
+                document.getElementById('s_coordA').innerHTML = `N:${p1.N.toFixed(2)} <br> E:${p1.E.toFixed(2)}`;
+                document.getElementById('s_coordB').innerHTML = `N:${p2.N.toFixed(2)} <br> E:${p2.E.toFixed(2)}`;
+                const res = computeGeo(p1, p2);
+                document.getElementById('s_distVal').textContent = res.dist.toFixed(3) + 'm';
+                document.getElementById('s_aziVal').textContent = formatDMS(res.azimuthDeg);
             }
 
-            // Events
-            canvas.addEventListener('mousemove', (e) => {
+            // 事件監聽 - 修正座標計算
+            function getMousePos(e) {
                 const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const coords = getSurveyCoords(x, y);
+                // 因為 canvas.width = rect.width (在 resizeAndDraw 設定)，所以 1:1 對應
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+
+            canvas.addEventListener('mousemove', (e) => {
                 if (state.step === 1) {
-                    state.currentMouse = { x, y, N: coords.N, E: coords.E };
+                    const pos = getMousePos(e);
+                    const coords = getSurveyCoords(pos.x, pos.y);
+                    state.currentMouse = { x: pos.x, y: pos.y, N: coords.N, E: coords.E };
                     draw();
                 }
             });
 
             canvas.addEventListener('click', (e) => {
-                const rect = canvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const coords = getSurveyCoords(x, y);
+                const pos = getMousePos(e);
+                const coords = getSurveyCoords(pos.x, pos.y);
+                const pData = { x: pos.x, y: pos.y, N: coords.N, E: coords.E };
+
                 if (state.step === 0 || state.step === 2) {
                     state.step = 1;
-                    state.p1 = { x, y, N: coords.N, E: coords.E };
+                    state.p1 = pData;
                     state.p2 = null;
-                    state.currentMouse = { x, y, N: coords.N, E: coords.E };
-                    draw();
-                } else if (state.step === 1) {
+                    state.currentMouse = pData;
+                } else {
                     state.step = 2;
-                    state.p2 = { x, y, N: coords.N, E: coords.E };
-                    draw();
+                    state.p2 = pData;
                 }
+                draw();
             });
 
-            // Initial Draw
-            draw();
-
-            return { draw }; // Public API
+            // 初始化
+            setTimeout(resizeAndDraw, 100);
+            return { resizeAndDraw };
         })();
 
         /**
-         * MODULE 2: CURVE DESIGN LOGIC
+         * MODULE 2: CURVE (L2)
          */
         const CurveModule = (function() {
             const canvas = document.getElementById('curveCanvas');
             const ctx = canvas.getContext('2d');
-            
+            const container = document.getElementById('curve-container');
+
             // Inputs
             const inputDelta = document.getElementById('c_inDelta');
             const inputR = document.getElementById('c_inR');
 
-            // Variables
             let R = 200, Delta = 60;
             let T, L, E_val, LC;
             let animProgress = 0, isAnimating = false;
-            let scale = 1.0;
-            const originX = 400; // Canvas Center X approximate
-            const originY = 500; // Canvas Bottom Y
+
+            function resizeAndDraw() {
+                canvas.width = container.offsetWidth;
+                canvas.height = container.offsetHeight;
+                update();
+            }
+            window.addEventListener('resize', resizeAndDraw);
 
             function update() {
-                // Read
                 Delta = parseFloat(inputDelta.value);
                 R = parseFloat(inputR.value);
 
-                // UI Update
                 document.getElementById('c_valDelta').innerText = Delta + "°";
-                document.getElementById('c_valR').innerText = R + " m";
+                document.getElementById('c_valR').innerText = R + "m";
 
-                // Calc
-                const DeltaRad = Delta * Math.PI / 180;
-                const halfDelta = DeltaRad / 2;
-                T = R * Math.tan(halfDelta);
-                L = R * DeltaRad;
-                E_val = R * (1 / Math.cos(halfDelta) - 1);
-                LC = 2 * R * Math.sin(halfDelta);
+                const dRad = Delta * Math.PI / 180;
+                const halfD = dRad / 2;
+                
+                T = R * Math.tan(halfD);
+                L = R * dRad;
+                E_val = R * (1 / Math.cos(halfD) - 1);
+                LC = 2 * R * Math.sin(halfD);
 
-                // Output
                 document.getElementById('c_outT').innerText = T.toFixed(3) + " m";
                 document.getElementById('c_outL').innerText = L.toFixed(3) + " m";
                 document.getElementById('c_outE').innerText = E_val.toFixed(3) + " m";
@@ -503,113 +475,105 @@
             }
 
             function draw() {
-                // Responsive center fix
-                const centerX = canvas.width / 2;
-                const bottomY = canvas.height - 50;
+                const w = canvas.width;
+                const h = canvas.height;
+                ctx.clearRect(0, 0, w, h);
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Auto Scale
-                scale = (canvas.height * 0.7) / (R + E_val); 
-                if(scale > 2) scale = 2;
+                // 自動縮放邏輯：讓曲線適應畫布
+                // 總高度需求約 R + E，保留一些邊距
+                let requiredH = R + E_val + 50; 
+                let scale = (h * 0.8) / requiredH; 
+                if (scale > 2) scale = 2; 
+
+                const cx = w / 2;
+                const cy = h - 50; // 圓心在下方
 
                 ctx.save();
-                ctx.translate(centerX, bottomY);
-                ctx.scale(scale, -scale); // Flip Y
+                ctx.translate(cx, cy);
+                ctx.scale(scale, -scale); // Y軸翻轉向上
 
-                const DeltaRad = Delta * Math.PI / 180;
+                const dRad = Delta * Math.PI / 180;
+                const angBC = (Math.PI/2) - (dRad/2);
+                const angEC = (Math.PI/2) + (dRad/2);
                 
-                // Coordinates
-                const angBC = (Math.PI/2) - (DeltaRad/2);
                 const ptBC = { x: R * Math.cos(angBC), y: R * Math.sin(angBC) };
-                
-                const angEC = (Math.PI/2) + (DeltaRad/2);
                 const ptEC = { x: R * Math.cos(angEC), y: R * Math.sin(angEC) };
+                const ptPI = { x: 0, y: R + E_val };
 
-                const distPI = R + E_val;
-                const ptPI = { x: 0, y: distPI };
-
-                // 1. Radius Lines
-                ctx.strokeStyle = '#555'; ctx.setLineDash([5, 5]); ctx.lineWidth = 1/scale;
+                // 畫虛線半徑
+                ctx.strokeStyle = '#555'; ctx.setLineDash([5,5]); ctx.lineWidth = 1/scale;
                 ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ptBC.x, ptBC.y); ctx.stroke();
                 ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ptEC.x, ptEC.y); ctx.stroke();
                 ctx.setLineDash([]);
 
-                // 2. Tangents (Red)
-                ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 2 / scale;
+                // 畫切線 (紅)
+                ctx.strokeStyle = '#ff5555'; ctx.lineWidth = 3/scale;
                 ctx.beginPath(); ctx.moveTo(ptBC.x, ptBC.y); ctx.lineTo(ptPI.x, ptPI.y); ctx.lineTo(ptEC.x, ptEC.y); ctx.stroke();
 
-                // 3. Curve (Blue)
-                ctx.strokeStyle = '#4db8ff'; ctx.lineWidth = 4 / scale;
+                // 畫曲線 (藍)
+                ctx.strokeStyle = '#4db8ff'; ctx.lineWidth = 5/scale;
                 ctx.beginPath(); ctx.arc(0, 0, R, angBC, angEC); ctx.stroke();
 
-                // 4. Points
-                drawPoint(ptBC, "BC");
-                drawPoint(ptEC, "EC");
-                drawPoint(ptPI, "PI");
-                drawPoint({x:0, y:0}, "O");
+                // 畫點
+                drawPt(ptBC, "BC"); drawPt(ptEC, "EC"); drawPt(ptPI, "PI"); drawPt({x:0,y:0}, "O");
 
-                // 5. Car Animation
+                // 動畫
                 if (isAnimating) {
-                    const currentAngle = angBC + (angEC - angBC) * animProgress;
-                    const carX = R * Math.cos(currentAngle);
-                    const carY = R * Math.sin(currentAngle);
+                    const curAng = angBC + (angEC - angBC) * animProgress;
+                    const cX = R * Math.cos(curAng);
+                    const cY = R * Math.sin(curAng);
                     
                     ctx.fillStyle = '#ffcc00';
-                    ctx.beginPath(); ctx.arc(carX, carY, 6/scale, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(cX, cY, 8/scale, 0, Math.PI*2); ctx.fill();
                     
-                    // Headlights
-                    const tanAngle = currentAngle + Math.PI/2;
-                    ctx.strokeStyle = 'rgba(255,255,0,0.8)'; ctx.lineWidth = 3/scale;
-                    ctx.beginPath(); ctx.moveTo(carX, carY); 
-                    ctx.lineTo(carX + 30*Math.cos(tanAngle), carY + 30*Math.sin(tanAngle)); ctx.stroke();
+                    // 車燈
+                    const tAng = curAng + Math.PI/2;
+                    ctx.strokeStyle = 'rgba(255,255,0,0.8)'; ctx.lineWidth = 4/scale;
+                    ctx.beginPath(); ctx.moveTo(cX, cY);
+                    ctx.lineTo(cX + 40*Math.cos(tAng), cY + 40*Math.sin(tAng)); ctx.stroke();
                 }
 
                 ctx.restore();
             }
 
-            function drawPoint(pt, label) {
+            function drawPt(pt, txt) {
                 ctx.fillStyle = 'white';
-                ctx.beginPath(); ctx.arc(pt.x, pt.y, 4/scale, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(pt.x, pt.y, 5, 0, Math.PI*2); ctx.fill();
                 ctx.save();
                 ctx.scale(1, -1);
-                ctx.fillStyle = '#aaa'; ctx.font = `${14/scale}px Arial`;
-                ctx.fillText(label, pt.x + 8/scale, -pt.y - 8/scale);
+                ctx.fillStyle = '#ccc'; 
+                // 字體大小固定，不隨 scale 縮放太誇張
+                ctx.font = '20px Arial'; 
+                ctx.fillText(txt, pt.x+10, -pt.y-10);
                 ctx.restore();
             }
 
             function startAnimation() {
                 if(isAnimating) return;
-                isAnimating = true;
-                animProgress = 0;
-                let lastTime = Date.now();
-                
+                isAnimating = true; animProgress = 0;
+                let lastT = Date.now();
                 function loop() {
                     if(!isAnimating) return;
-                    const now = Date.now();
-                    const dt = now - lastTime;
-                    lastTime = now;
-                    animProgress += dt * 0.0005; // Speed
-                    
-                    if (animProgress >= 1) {
-                        animProgress = 1;
-                        isAnimating = false;
-                    }
+                    let now = Date.now();
+                    let dt = now - lastT; lastT = now;
+                    animProgress += dt * 0.0005;
+                    if(animProgress >= 1) { animProgress=1; isAnimating=false; }
                     draw();
                     if(isAnimating) requestAnimationFrame(loop);
                 }
                 loop();
             }
 
-            // Bind Inputs
             inputDelta.addEventListener('input', update);
             inputR.addEventListener('input', update);
-
-            // Initial
-            update();
-
-            return { draw, startAnimation };
+            
+            return { resizeAndDraw, startAnimation };
         })();
+
+        // 啟動
+        window.onload = function() {
+            SurveyModule.resizeAndDraw();
+        };
     </script>
 </body>
 </html>
